@@ -1,0 +1,75 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  basic-pathways:
+    runs-on: ubuntu-latest
+    env:
+      OPEN_WAM_CI_NO_TORCH: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Lockfile is current
+        run: uv lock --check
+      - name: Whitespace check
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          if [[ -n "${BASE_SHA}" && "${BASE_SHA}" != "0000000000000000000000000000000000000000" ]]; then
+            git diff --check "${BASE_SHA}" "${HEAD_SHA}"
+          else
+            git diff --check
+          fi
+      - name: Basic package, config, registry, and CLI pathway checks
+        # Static stdlib-only checks. Do not install project deps, run pytest, import open_wam, or install Torch here.
+        run: python scripts/ci_basic_sanity.py
+
+  minimal-package:
+    runs-on: ubuntu-latest
+    env:
+      OPEN_WAM_CI_NO_TORCH: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install minimal package
+        run: |
+          python -m venv .ci-minimal
+          .ci-minimal/bin/python -m pip install --upgrade pip
+          .ci-minimal/bin/pip install .
+      - name: Import and CLI parser safety
+        run: |
+          .ci-minimal/bin/python - <<'PY'
+          import importlib.util
+          import open_wam
+          import open_wam.configs
+          import open_wam.runtime
+          import open_wam.pipelines
+          assert importlib.util.find_spec("torch") is None
+          assert open_wam.__version__
+          PY
+          .ci-minimal/bin/open-wam-train --help
+          .ci-minimal/bin/open-wam-eval --help
+          .ci-minimal/bin/open-wam-inspect-config --help
+          .ci-minimal/bin/open-wam-validate-config --help
+      - name: Static config validation from installed package
+        run: |
+          .ci-minimal/bin/open-wam-validate-config \
+            configs/experiments/mot_libero_latent_local_video_then_action_heng_compatible.yaml \
+            configs/experiments/mot_libero_latent_local_joint_heng_compatible.yaml \
+            configs/experiments/parallel_stream_libero_lingbot_m1_video_then_action_heng_compatible.yaml

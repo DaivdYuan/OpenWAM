@@ -1,0 +1,33 @@
+name: cpu-smoke
+
+on:
+  workflow_dispatch:
+
+jobs:
+  public-tiny-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install Torch-backed train stack
+        run: uv sync --group dev --extra train
+      - name: Validate public strict-old configs
+        run: |
+          uv run open-wam-validate-config \
+            configs/experiments/mot_libero_latent_local_video_then_action_heng_compatible.yaml \
+            configs/experiments/mot_libero_latent_local_joint_heng_compatible.yaml \
+            configs/experiments/parallel_stream_libero_lingbot_m1_video_then_action_heng_compatible.yaml
+      - name: Run release pytest subset
+        run: |
+          uv run python -m pytest \
+            tests/test_config_loader.py \
+            tests/test_static_config_schema.py \
+            tests/test_mot_runtime_routing.py \
+            tests/test_mot_modules.py::test_mot_action_then_video_action_only_rollout_skips_predicted_video \
+            tests/test_mot_modules.py::test_mot_decoupled_action_only_rollout_skips_split_cache_video_denoise \
+            -q

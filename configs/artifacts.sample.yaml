@@ -1,0 +1,20 @@
+artifacts:
+  - artifact_id: checkpoint-layout-reference
+    method_family: documentation
+    variant: checkpoint_layout_reference
+    benchmark: none
+    config: configs/experiments/mot_libero_latent_local_video_then_action_heng_compatible.yaml
+    local_path_alias: checkpoints.example
+    expected_layout:
+      root_files:
+        - model_state.pt
+        - full_training_state.pt
+      directories:
+        - transformer
+      transformer_files:
+        - transformer/config.json
+    download_url: null
+    checksum: null
+    license: MIT
+    source: "layout-only documentation"
+    notes: "Documents the expected checkpoint layout; not a downloadable or checked-in artifact."

@@ -1,0 +1,27 @@
+# Open-WAM Documentation
+
+Open-WAM is a research framework for studying world-action-model policy
+attachments while keeping the shared visual backbone stable. The public docs
+focus on reproducible usage, extension points, and benchmark contracts. Internal
+engineering notes are not published as part of this site.
+
+## Start Here
+
+- [Quickstart](quickstart.md): install, validate configs, and run CPU-safe smoke checks.
+- [Architecture](architecture.md): the stable runtime boundary and core abstractions.
+- [Method Families](method_families.md): how the current policy variants fit together.
+- [Benchmarks and Data](benchmarks.md): LIBERO, RoboTwin, CALVIN, and synthetic fixtures.
+- [Running Experiments](running_experiments.md): training, evaluation, static validation, and resource-gated rollouts.
+
+## Research Extension
+
+- [Extension SDK](extension_sdk.md): concrete conventions for adding new research components.
+- [Artifacts](artifacts.md): checkpoint manifests, local path aliases, and artifact cards.
+- [Reproducibility](reproducibility.md): result envelopes, experiment cards, and tracking policy.
+
+## Contributor Operations
+
+- [CLI Reference](cli.md): package-owned commands and root script policy.
+- [Testing](testing.md): CI tiers, pytest markers, and resource gates.
+- [GitHub Pages](github_pages.md): how this site is built and deployed.
+- [Release Process](release.md): versioning, packaging checks, and release checklist.
