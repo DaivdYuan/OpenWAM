@@ -1,7 +1,11 @@
-# OpenWAM
+# OpenWAM Has Moved
 
-OpenWAM is an open-source world action model framework developed at Stanford University.
+The maintained OpenWAM repository is now:
 
-We are preparing the model's final release. The forthcoming release will be a substantial upgrade over the previous version.
+## [OpenWAM/OpenWAM](https://github.com/OpenWAM/OpenWAM)
 
-For questions, please contact [davidy02@stanford.edu](mailto:davidy02@stanford.edu).
+Documentation is available at
+[openwam.github.io/OpenWAM](https://openwam.github.io/OpenWAM/).
+
+This repository is archived and retained so existing links continue to direct
+readers to the official project.
